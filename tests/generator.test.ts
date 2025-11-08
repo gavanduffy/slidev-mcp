@@ -1,0 +1,176 @@
+import { describe, expect, it } from 'vitest'
+import { generateMarkdown } from '../src/generator/markdown.js'
+import type { Lesson } from '../src/generator/schema.js'
+
+const lesson: Lesson = {
+  project: {
+    engine: 'slidev',
+    title: 'Building Resilience and Growth Mindset',
+    subject: 'PSHE Secondary 1',
+    duration_min: 45,
+    theme: 'default',
+    unocss: true,
+    features: {
+      presenter_mode: true,
+      drawing: true,
+      vue_components: true,
+      syntax_highlighting: true,
+    },
+    export: { formats: ['pptx', 'pdf', 'html'] },
+    compatibility: {
+      require_full_feature_parity: true,
+      validate_markdown: true,
+      allow_theme_overrides: true,
+    },
+  },
+  assets: [
+    {
+      id: 'hero1',
+      source: { type: 'query', query: 'person climbing mountain peak at sunrise' },
+      alt: 'Mountain climber reaching summit',
+      license: 'All',
+    },
+    {
+      id: 'brain1',
+      source: { type: 'query', query: 'human brain glowing neural pathways illustration' },
+      alt: 'Brain neural pathways',
+      license: 'All',
+    },
+  ],
+  slides: [
+    {
+      layout: 'cover',
+      title: 'Building Resilience and Growth Mindset',
+      subtitle: 'PSHE Secondary 1 · Term 1 · 45 minutes',
+      background: {
+        imageRef: 'hero1',
+        dim: 0.35,
+      },
+      notes: 'Welcome and agenda overview.',
+      transition: 'fade'
+    },
+    {
+      layout: 'center',
+      title: 'Starter: “Famous Failures” Quiz',
+      bullets: [
+        'J.K. Rowling — rejected by 12 publishers',
+        'Michael Jordan — cut from high school team',
+        'Walt Disney — fired for \'lacking imagination\'',
+        'Oprah Winfrey — told she was \'unfit for TV\'',
+      ],
+      callout: 'What do they have in common?',
+      notes: 'Prompt pair-share, then collect 2–3 answers.',
+      transition: 'slide-up'
+    },
+    {
+      layout: 'two-cols',
+      title: 'Two Ways of Thinking',
+      left: {
+        heading: 'Fixed Mindset',
+        items: [
+          '“I’m just not good at math”',
+          '“I give up”',
+          '“This is too hard”',
+        ],
+      },
+      right: {
+        heading: 'Growth Mindset',
+        items: [
+          '“I can improve with practice”',
+          '“I’ll try a different strategy”',
+          '“This will take time and effort”',
+        ],
+      },
+      notes: 'Normalize both; model reframes.',
+      transition: 'slide-up'
+    },
+    {
+      layout: 'default',
+      title: 'The Science of Growth Mindset',
+      mediaTop: {
+        imageRef: 'brain1',
+      },
+      bigBullets: [
+        'New connections form when you learn',
+        'Practice strengthens connections',
+        'Mistakes help your brain grow',
+        'Intelligence can develop',
+      ],
+      notes: 'Keep claims accurate and evidence-aligned.',
+      transition: 'slide-left'
+    },
+    {
+      layout: 'default',
+      title: 'Interactive Check',
+      components: [
+        {
+          name: 'QuizMultipleChoice',
+          props: {
+            question: 'Which statement is a growth mindset reframe?',
+            choices: [
+              'I’m terrible at drawing.',
+              'I can improve my drawing with practice.',
+              'I’ll never be as good as them.',
+            ],
+            correctIndex: 1,
+          },
+        },
+        {
+          name: 'ProgressBar',
+          props: { value: 60 },
+        },
+      ],
+      codeBlock: {
+        language: 'ts',
+        content: `const mindsetReframe = (statement: string) => {\n  return statement.replace('I can't', 'I can learn to')\n}\nconsole.log(mindsetReframe('I can't solve this yet'))`,
+      },
+      notes: 'Demonstrate Slidev Vue components.',
+      transition: 'slide-right'
+    },
+    {
+      layout: 'center',
+      title: 'The 5 Rs of Resilience',
+      steps_numbered: ['Recognize', 'Reframe', 'Reach out', 'Reflect', 'Retry'],
+      exitTicket: {
+        prompt: 'Write one growth reframe you’ll use this week.',
+      },
+      notes: 'Invite one volunteer to share.',
+      transition: 'fade'
+    },
+  ],
+}
+
+describe('generateMarkdown', () => {
+  const markdown = generateMarkdown(lesson)
+
+  it('creates deck front matter', () => {
+    expect(markdown).toMatch(/title: Building Resilience and Growth Mindset/)
+    expect(markdown).toMatch(/theme: default/)
+  })
+
+  it('renders slide layouts and content', () => {
+    expect(markdown).toMatch(/layout: cover/)
+    expect(markdown).toMatch(/layout: two-cols/)
+    expect(markdown).toMatch(/::left::[\s\S]*::right::/)
+  })
+
+  it('injects vue components', () => {
+    expect(markdown).toMatch(/<QuizMultipleChoice v-bind=/)
+    expect(markdown).toMatch(/<ProgressBar v-bind=/)
+  })
+
+  it('embeds assets with placeholders', () => {
+    expect(markdown).toMatch(/!\[Brain neural pathways]/)
+    expect(markdown).toMatch(/<img query="human brain glowing neural pathways illustration"/)
+  })
+
+  it('includes notes and transitions', () => {
+    expect(markdown).toMatch(/notes: \|/)
+    expect(markdown).toMatch(/transition: fade/)
+  })
+
+  it('renders code blocks for syntax highlighting', () => {
+    expect(markdown).toMatch(/```ts/)
+    expect(markdown).toMatch(/mindsetReframe/)
+  })
+})

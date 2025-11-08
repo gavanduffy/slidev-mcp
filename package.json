@@ -1,0 +1,31 @@
+{
+  "name": "slidev-mcp",
+  "version": "0.1.0",
+  "type": "module",
+  "private": true,
+  "scripts": {
+    "dev": "slidev",
+    "build": "slidev build",
+    "export:pdf": "slidev export --format pdf",
+    "export:pptx": "slidev export --format pptx",
+    "export:html": "slidev export --format static",
+    "generate": "tsx src/generator/index.ts",
+    "generate:watch": "tsx watch src/generator/index.ts",
+    "validate": "tsx src/validation/validate.ts",
+    "test": "vitest"
+  },
+  "dependencies": {
+    "@slidev/cli": "^0.43.10",
+    "commander": "^12.1.0",
+    "fs-extra": "^11.2.0",
+    "js-yaml": "^4.1.0",
+    "kleur": "^4.1.5",
+    "zod": "^3.22.4"
+  },
+  "devDependencies": {
+    "@types/node": "^20.11.30",
+    "tsx": "^4.7.0",
+    "typescript": "^5.4.0",
+    "vitest": "^1.5.0"
+  }
+}
