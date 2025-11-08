@@ -1,0 +1,9 @@
+/* Global UnoCSS overrides for Slidev decks */
+:root {
+  --slidev-theme-primary: #5E4CE6;
+  --slidev-theme-accent: #FF6B6B;
+}
+
+.slide-callout {
+  @apply slide-callout;
+}
